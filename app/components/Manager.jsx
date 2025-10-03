@@ -13,6 +13,7 @@ const Manager = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [form, setForm] = useState({ site: "", username: "", password: "" });
+  const [loadingPasswords, setLoadingPasswords] = useState(true)
   const [passwords, setPasswords] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -20,22 +21,25 @@ const Manager = () => {
   const session = useSession();
   // Fetch saved passwords from MongoDB on first render
   const fetchPasswords = async () => {
-    if (session?.data) {
-    try {
-      const res = await fetch("/api/passwords");
-      const data = await res.json();
-      setPasswords(data);
-    } catch (err) {
-      console.error(err);
+    if (session.status === "authenticated") {
+      setLoadingPasswords(true);
+      try {
+        const res = await fetch("/api/passwords");
+        const data = await res.json();
+        setPasswords(data);
+      } catch (err) {
+        console.error(err);
+      }
+      setLoadingPasswords(false);
     }
-  }}
+  }
 
 
   useEffect(() => {
-    if (session?.data) {
-    fetchPasswords();
+    if (session.status === "authenticated") {
+      fetchPasswords();
     }
-  }, []);
+  }, [session.status]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -202,120 +206,126 @@ const Manager = () => {
               </tr>
             </thead>
             <tbody>
-              {passwords.map((item, index) => (
-                <tr
-                  key={item._id || index}
-                  className="border-t border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                >
-                  <td className="px-4 py-3">
-                    {item.site ? (
-                      <Link href={item.site} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
-                        <span className="truncate max-w-[200px] block">{item.site}</span>
-                      </Link>
-                    ) : (
-                      <span className="text-gray-400 italic">No site</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="truncate max-w-[150px] block">{item.username}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {editId === item._id ? (
-                      <input
-                        type="text"
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 outline-none w-full max-w-[200px]"
-                      />
-                    ) : (
-                      <span className="font-mono text-sm truncate max-w-[200px] block">{item.password}</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-center gap-2">
-                      <button
-                        onClick={() => handleCopy(item._id, item.password)}
-                        className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors"
-                        title="Copy password"
-                      >
-                        <AnimatePresence mode="wait" initial={false}>
-                          {copiedId === item._id ? (
-                            <motion.div
-                              key="check"
-                              initial={{ opacity: 0, scale: 0.5 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.5 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              <Check className="w-4 h-4 text-green-600" />
-                            </motion.div>
-                          ) : (
-                            <motion.div
-                              key="copy"
-                              initial={{ opacity: 0, scale: 0.5 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.5 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              <Copy className="w-4 h-4 text-blue-600" />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </button>
-
-                      {editId === item._id ? (
-                        <button
-                          onClick={() => {
-                            editPassword(item._id, editValue);
-                            setEditId(null);
-                          }}
-                          className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-gray-700 transition-colors"
-                          title="Save changes"
-                        >
-                          <lord-icon
-                            src="https://cdn.lordicon.com/fikcyfpp.json"
-                            trigger="hover"
-                            stroke="bold"
-                            colors="primary:#121331,secondary:#16a34a"
-                            style={{ width: "20px", height: "20px" }}
-                          ></lord-icon>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            setEditId(item._id);
-                            setEditValue(item.password);
-                          }}
-                          className="p-2 rounded-full hover:bg-yellow-100 dark:hover:bg-gray-700 transition-colors"
-                          title="Edit password"
-                        >
-                          <lord-icon
-                            src="https://cdn.lordicon.com/fikcyfpp.json"
-                            trigger="hover"
-                            stroke="bold"
-                            colors="primary:#121331,secondary:#155dfc"
-                            style={{ width: "20px", height: "20px" }}
-                          ></lord-icon>
-                        </button>
-                      )}
-
-                      <button
-                        onClick={() => deletePassword(item._id)}
-                        className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-gray-700 transition-colors"
-                        title="Delete password"
-                      >
-                        <lord-icon
-                          src="https://cdn.lordicon.com/jzinekkv.json"
-                          trigger="hover"
-                          stroke="bold"
-                          colors="primary:#121331,secondary:#dc2626"
-                          style={{ width: "20px", height: "20px" }}
-                        ></lord-icon>
-                      </button>
-                    </div>
-                  </td>
+              {loadingPasswords ? (
+                <tr>
+                  <td colSpan={4} className="text-center text-gray-500">Loading passwords...</td>
                 </tr>
-              ))}
+              ) : (
+                passwords.map((item, index) => (
+                  <tr
+                    key={item._id || index}
+                    className="border-t border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                  >
+                    <td className="px-4 py-3">
+                      {item.site ? (
+                        <Link href={item.site} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                          <span className="truncate max-w-[200px] block">{item.site}</span>
+                        </Link>
+                      ) : (
+                        <span className="text-gray-400 italic">No site</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="truncate max-w-[150px] block">{item.username}</span>
+                    </td>
+                    <td className="px-4 py-3">
+                      {editId === item._id ? (
+                        <input
+                          type="text"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 outline-none w-full max-w-[200px]"
+                        />
+                      ) : (
+                        <span className="font-mono text-sm truncate max-w-[200px] block">{item.password}</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => handleCopy(item._id, item.password)}
+                          className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors"
+                          title="Copy password"
+                        >
+                          <AnimatePresence mode="wait" initial={false}>
+                            {copiedId === item._id ? (
+                              <motion.div
+                                key="check"
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                transition={{ duration: 0.3 }}
+                              >
+                                <Check className="w-4 h-4 text-green-600" />
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="copy"
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                transition={{ duration: 0.3 }}
+                              >
+                                <Copy className="w-4 h-4 text-blue-600" />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </button>
+
+                        {editId === item._id ? (
+                          <button
+                            onClick={() => {
+                              editPassword(item._id, editValue);
+                              setEditId(null);
+                            }}
+                            className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-gray-700 transition-colors"
+                            title="Save changes"
+                          >
+                            <lord-icon
+                              src="https://cdn.lordicon.com/fikcyfpp.json"
+                              trigger="hover"
+                              stroke="bold"
+                              colors="primary:#121331,secondary:#16a34a"
+                              style={{ width: "20px", height: "20px" }}
+                            ></lord-icon>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setEditId(item._id);
+                              setEditValue(item.password);
+                            }}
+                            className="p-2 rounded-full hover:bg-yellow-100 dark:hover:bg-gray-700 transition-colors"
+                            title="Edit password"
+                          >
+                            <lord-icon
+                              src="https://cdn.lordicon.com/fikcyfpp.json"
+                              trigger="hover"
+                              stroke="bold"
+                              colors="primary:#121331,secondary:#155dfc"
+                              style={{ width: "20px", height: "20px" }}
+                            ></lord-icon>
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => deletePassword(item._id)}
+                          className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-gray-700 transition-colors"
+                          title="Delete password"
+                        >
+                          <lord-icon
+                            src="https://cdn.lordicon.com/jzinekkv.json"
+                            trigger="hover"
+                            stroke="bold"
+                            colors="primary:#121331,secondary:#dc2626"
+                            style={{ width: "20px", height: "20px" }}
+                          ></lord-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -454,13 +464,13 @@ const Manager = () => {
           ))}
         </div>
       </div>
-      
+
       {/* Mobile Cards */}
-      <script src="https://cdn.lordicon.com/lordicon.js" /> {/* Load Lordicon script */ }
+      <script src="https://cdn.lordicon.com/lordicon.js" /> {/* Load Lordicon script */}
     </div>
   )
 }
-      {/* Mobile Cards */}
+{/* Mobile Cards */ }
 
 
 export default Manager;
