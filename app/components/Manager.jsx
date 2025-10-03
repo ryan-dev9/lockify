@@ -1,6 +1,7 @@
 // app/components/Manager.jsx
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Shield, Copy, Check } from "lucide-react";
@@ -11,15 +12,15 @@ import Navbarx from "./Navbar";
 const Manager = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
-  const [storageOption, setStorageOption] = useState("local");
   const [form, setForm] = useState({ site: "", username: "", password: "" });
   const [passwords, setPasswords] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
 
-
+  const session = useSession();
   // Fetch saved passwords from MongoDB on first render
   const fetchPasswords = async () => {
+    if (session?.data) {
     try {
       const res = await fetch("/api/passwords");
       const data = await res.json();
@@ -27,10 +28,13 @@ const Manager = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }}
+
 
   useEffect(() => {
+    if (session?.data) {
     fetchPasswords();
+    }
   }, []);
 
   const handleChange = (e) => {
