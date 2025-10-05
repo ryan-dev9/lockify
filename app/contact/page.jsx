@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Instagram, Github, Send, MessageSquare, Clock, Users, Shield, CheckCircle } from 'lucide-react';
+import { Mail, Instagram, Github, Send, MessageSquare, Clock, Users, CheckCircle } from 'lucide-react';
 import Navbarx from '../components/Navbar';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -19,12 +19,6 @@ const staggerContainer = {
   }
 };
 
-const scaleIn = {
-  initial: { scale: 0, opacity: 0 },
-  animate: { scale: 1, opacity: 1 },
-  transition: { duration: 0.5, type: "spring", stiffness: 100 }
-};
-
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -33,7 +27,7 @@ const ContactPage = () => {
     message: '',
     category: 'general'
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
@@ -46,14 +40,13 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email || !formData.message) {
       toast.error('Please fill in all required fields', { theme: 'dark' });
       return;
     }
-    
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       toast.success('Message sent successfully! We\'ll get back to you soon.', { theme: 'dark' });
@@ -121,17 +114,17 @@ const ContactPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-900">
       <Navbarx />
       <ToastContainer />
-      
+
       {/* Hero Section */}
       <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <motion.div 
+          <motion.div
             className="text-center"
             initial="initial"
             animate="animate"
             variants={staggerContainer}
           >
-            <motion.div 
+            <motion.div
               className="flex justify-center items-center mb-6"
               variants={fadeInUp}
             >
@@ -142,8 +135,8 @@ const ContactPage = () => {
                 </span>
               </h1>
             </motion.div>
-            
-            <motion.h2 
+
+            <motion.h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-800 dark:text-white mb-6"
               variants={fadeInUp}
             >
@@ -152,12 +145,12 @@ const ContactPage = () => {
                 Help You
               </span>
             </motion.h2>
-            
-            <motion.p 
+
+            <motion.p
               className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed px-4"
               variants={fadeInUp}
             >
-              Have questions about Lockify? Need technical support? Want to learn more about our enterprise solutions? 
+              Have questions about Lockify? Need technical support? Want to learn more about our enterprise solutions?
               Our dedicated team is ready to assist you.
             </motion.p>
           </motion.div>
@@ -181,7 +174,7 @@ const ContactPage = () => {
                 Multiple ways to reach our support team. We're committed to providing excellent customer service.
               </p>
             </motion.div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               {contactInfo.map((info, index) => {
                 const IconComponent = info.icon;
@@ -226,7 +219,7 @@ const ContactPage = () => {
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-6 sm:mb-8">
                 Send us a <span className="text-blue-600">Message</span>
               </h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
@@ -243,7 +236,7 @@ const ContactPage = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email Address *
@@ -259,7 +252,7 @@ const ContactPage = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Category
@@ -277,7 +270,7 @@ const ContactPage = () => {
                     ))}
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Subject
@@ -291,7 +284,7 @@ const ContactPage = () => {
                     placeholder="Brief description of your inquiry"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Message *
@@ -306,13 +299,12 @@ const ContactPage = () => {
                     required
                   />
                 </div>
-                
+
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${
-                    isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:from-blue-700 hover:to-purple-700'
-                  }`}
+                  className={`w-full flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:from-blue-700 hover:to-purple-700'
+                    }`}
                   whileHover={!isSubmitting ? { scale: 1.02 } : {}}
                   whileTap={!isSubmitting ? { scale: 0.98 } : {}}
                 >
@@ -330,7 +322,7 @@ const ContactPage = () => {
                 </motion.button>
               </form>
             </motion.div>
-            
+
             {/* Additional Info & FAQ */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
@@ -365,7 +357,7 @@ const ContactPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-4 sm:mb-6">Frequently Asked Questions</h3>
                 <div className="space-y-3 sm:space-y-4">
@@ -392,33 +384,6 @@ const ContactPage = () => {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      {/* <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <Shield className="w-16 h-16 text-white mx-auto mb-6" />
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-              Enterprise Solutions Available
-            </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Looking for custom security solutions for your business? Contact our enterprise team for tailored packages.
-            </p>
-            <motion.button
-              className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Learn More About Enterprise
-            </motion.button>
-          </motion.div>
-        </div>
-      </section> */}
     </div>
   );
 };

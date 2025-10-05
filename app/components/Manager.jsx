@@ -10,6 +10,8 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import Navbarx from "./Navbar";
 
 const Manager = () => {
+
+  // States 
   const [showPassword, setShowPassword] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [form, setForm] = useState({ site: "", username: "", password: "" });
@@ -17,8 +19,8 @@ const Manager = () => {
   const [passwords, setPasswords] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
-
   const session = useSession();
+
   // Fetch saved passwords from MongoDB on first render
   const fetchPasswords = async () => {
     if (session.status === "authenticated") {
@@ -34,7 +36,7 @@ const Manager = () => {
     }
   }
 
-
+  
   useEffect(() => {
     if (session.status === "authenticated") {
       fetchPasswords();
@@ -52,17 +54,6 @@ const Manager = () => {
     }
 
     try {
-      // if (storageOption === "local") {
-      //   // ✅ Save to localStorage
-      //   const existing = JSON.parse(localStorage.getItem("passwords")) || [];
-      //   const newPasswords = [...existing, form];
-      //   localStorage.setItem("passwords", JSON.stringify(newPasswords));
-
-      //   // Update state
-      //   setPasswords(newPasswords);
-
-      //   toast.success("Password added to Local Storage", { position: "top-right", theme: "dark" });
-      // } else {
       // ✅ Save to server (MongoDB)
       const res = await fetch("/api/passwords", {
         method: "POST",
@@ -74,7 +65,6 @@ const Manager = () => {
       setPasswords(prev => Array.isArray(prev) ? [...prev, newPassword] : [newPassword]);
 
       toast.success("Password added to Server", { position: "top-right", theme: "dark" });
-      // }
 
       // Clear form
       setForm({ site: "", username: "", password: "" });
@@ -82,12 +72,10 @@ const Manager = () => {
       console.error(err);
       toast.error("Failed to add password", { theme: "dark" });
     }
-
     await fetchPasswords();
   };
 
-
-
+  // Copy to clipboard function
   const handleCopy = (id, text) => {
     toast.success("Copied to clipboard", {
       position: "top-right",
@@ -101,6 +89,7 @@ const Manager = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  // password delete function
   const deletePassword = async (id) => {
     await fetch(`/api/passwords/${id}`, { method: "DELETE" });
     setPasswords(passwords.filter((item) => item._id !== id));
@@ -108,6 +97,7 @@ const Manager = () => {
     await fetchPasswords();
   };
 
+  // password edit function
   const editPassword = async (id, newPassword) => {
     const res = await fetch(`/api/passwords/${id}`, {
       method: "PUT",
@@ -124,6 +114,8 @@ const Manager = () => {
     <div className="container mx-auto px-4 py-5 max-w-7xl mt-16 ">
       <Navbarx />
       <ToastContainer />
+
+      {/* Logo section */}
       <div className="flex justify-center items-center mb-4 mt-8 md:mt-12">
         <Shield className="w-8 h-8 sm:w-12 sm:h-12 text-blue-700" />
         <span className="pl-3 text-3xl sm:text-4xl md:text-7xl font-semibold">Lockify</span>
@@ -179,6 +171,7 @@ const Manager = () => {
           </div>
         </div>
 
+        {/* Submit Button */}
         <button
           onClick={handleSave}
           className="flex items-center justify-center w-full md:w-auto mx-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full shadow-md transition"
@@ -191,6 +184,7 @@ const Manager = () => {
           <span className="pl-2 text-lg">Add Password</span>
         </button>
       </div>
+
 
       {/* Passwords Table (unchanged except overflow improvements) */}
       <div className="mt-8 md:mt-10 w-full">
@@ -282,7 +276,7 @@ const Manager = () => {
                             title="Save changes"
                           >
                             <lord-icon
-                              src="https://cdn.lordicon.com/fikcyfpp.json"
+                              src="/loricons/edit.json"
                               trigger="hover"
                               stroke="bold"
                               colors="primary:#121331,secondary:#16a34a"
@@ -299,7 +293,7 @@ const Manager = () => {
                             title="Edit password"
                           >
                             <lord-icon
-                              src="https://cdn.lordicon.com/fikcyfpp.json"
+                              src="/loricons/edit.json"
                               trigger="hover"
                               stroke="bold"
                               colors="primary:#121331,secondary:#155dfc"
@@ -314,7 +308,7 @@ const Manager = () => {
                           title="Delete password"
                         >
                           <lord-icon
-                            src="https://cdn.lordicon.com/jzinekkv.json"
+                            src="/loricons/delete.json"
                             trigger="hover"
                             stroke="bold"
                             colors="primary:#121331,secondary:#dc2626"
@@ -418,7 +412,7 @@ const Manager = () => {
                         title="Save changes"
                       >
                         <lord-icon
-                          src="https://cdn.lordicon.com/fikcyfpp.json"
+                          src="/loricons/edit.json"
                           trigger="hover"
                           stroke="bold"
                           colors="primary:#121331,secondary:#16a34a"
@@ -435,7 +429,7 @@ const Manager = () => {
                         title="Edit password"
                       >
                         <lord-icon
-                          src="https://cdn.lordicon.com/fikcyfpp.json"
+                          src="/loricons/edit.json"
                           trigger="hover"
                           stroke="bold"
                           colors="primary:#121331,secondary:#155dfc"
@@ -450,7 +444,7 @@ const Manager = () => {
                       title="Delete password"
                     >
                       <lord-icon
-                        src="https://cdn.lordicon.com/jzinekkv.json"
+                        src="/loricons/delete.json"
                         trigger="hover"
                         stroke="bold"
                         colors="primary:#121331,secondary:#dc2626"
@@ -464,13 +458,7 @@ const Manager = () => {
           ))}
         </div>
       </div>
-
-      {/* Mobile Cards */}
-      <script src="https://cdn.lordicon.com/lordicon.js" /> {/* Load Lordicon script */}
     </div>
   )
 }
-{/* Mobile Cards */ }
-
-
 export default Manager;

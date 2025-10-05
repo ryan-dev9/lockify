@@ -9,27 +9,23 @@ import Image from "next/image";
 import ThemeToggleButton from "@/components/ui/theme-toggle-button";
 
 
-
 const Navbarx = () => {
     const { data: session } = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
-
     const navLinks = [
         { name: "Home", href: "/" },
         { name: "About", href: "/about" },
         { name: "Contact", href: "/contact" },
     ];
 
-    // const handleChange = (e) => {
-    //     setOption(e.target.value);
-    //     setStorageOption(e.target.value); // parent component ko inform karo
-    // };
     return (
         <nav className="w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl fixed top-0 left-0 shadow-lg border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-15">
+
                     {/* Mobile menu button and logo */}
                     <div className="flex items-center gap-3 md:gap-4">
+
                         {/* Mobile hamburger menu */}
                         <button
                             className="md:hidden flex flex-col gap-1 p-2 group"
@@ -40,7 +36,7 @@ const Navbarx = () => {
                             <span className={`block h-0.5 w-6 bg-gray-700 dark:bg-white rounded transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}></span>
                             <span className={`block h-0.5 w-6 bg-gray-700 dark:bg-white rounded transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-1.5" : ""}`}></span>
                         </button>
-                        
+
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-1">
                             <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-500" />
@@ -50,7 +46,7 @@ const Navbarx = () => {
                         </Link>
                     </div>
 
-                    
+
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-6">
                         {navLinks.map((link) => (
@@ -72,7 +68,7 @@ const Navbarx = () => {
                         <ThemeToggleButton />
                         <Authenticator />
                     </div>
-                    
+
                     {/* Mobile User Section */}
                     <div className="md:hidden flex items-center gap-2">
                         <ThemeToggleButton />
@@ -90,7 +86,7 @@ const Navbarx = () => {
                     </div>
                 </div>
             </div>
-            
+
             {/* Mobile Menu */}
             <AnimatePresence>
                 {menuOpen && (
@@ -119,7 +115,7 @@ const Navbarx = () => {
                                     </Link>
                                 </motion.div>
                             ))}
-                            
+
                             {/* Mobile Authentication */}
                             <motion.div
                                 className="pt-4 border-t border-gray-200 dark:border-gray-700"
